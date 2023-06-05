@@ -46,6 +46,7 @@ const Home1 = () => {
 
   const handleMouseEnter = () => {
     setIsHovered(true);
+    // console.log('Mouse entered');
   };
 
   const handleMouseLeave = () => {
@@ -112,7 +113,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
   margin: `0 0 ${grid}px 0`,
 
   // Change background color if dragging
-  background: isDragging ? "lightgreen" : "grey",
+  background: isDragging ? "lightgreen" : "purple",
 
   // Styles we need to apply on draggables
   ...draggableStyle,
@@ -121,10 +122,10 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 const getListStyle = (isDraggingOver) => ({
   background: isDraggingOver ? "lightblue" : "lightgrey",
   padding: `${grid}px`,
-  width: "250px",
+
 });
 
-const [items, setItems] = useState(getItems(10));
+const [items, setItems] = useState(list.length);
 
 useEffect(() => {
   // Check if the window object is available
@@ -150,6 +151,7 @@ const onDragEnd = (result) => {
   setItems(updatedItems);
 };
   return (
+    typeof window !== "undefined" && (
     <>
       <div className='h-[100vh] bg-red-600 w-full flex flex-col justify-between items-center'>
         <div className='h-[20%] flex flex-col justify-end items-center w-full'>
@@ -163,18 +165,41 @@ const onDragEnd = (result) => {
         </div>
 
         <div className='h-[60%] mt-4 flex justify-center items-start w-full'>
-          <div className='bg-white w-[40%]'>
+          <div className='bg-white md:w-[40%] w-[60%]'>
             <div className='h-[10vh]'>
               {filteredList.length === 0 && <div>Nothing to show</div>}
             </div>
+            <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="droppable">
+          {(provided, snapshot) => (
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              style={getListStyle(snapshot.isDraggingOver)}
+              className='w-full bg-black'
+            >
 
-            {filteredList.map((item, index) => (
-              <div
-                key={index}
-                className='flex flex-row justify-between items-center border-t border-black'
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
+            {filteredList.map((item, index) => {
+               const draggableId = `item-${index}`;
+              return(
+              <Draggable
+                // key={index}
+                key={draggableId} draggableId={draggableId} index={index}
+                className='flex flex-row justify-between items-center border-t border-black w-full'
+
               >
+                {(provided, snapshot) => (
+                <div
+                className='w-full flex flex-row justify-between'
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave} 
+                ref={provided.innerRef}
+                {...provided.draggableProps}
+                {...provided.dragHandleProps}
+                style={getItemStyle(
+                  snapshot.isDragging,
+                  provided.draggableProps.style
+                )}>
                 <label>
                   <div
                     className='circle-icon'
@@ -197,8 +222,15 @@ const onDragEnd = (result) => {
                 ) : (
                   <div className='text-white'>..... </div>
                 )}
-              </div>
-            ))}
+                </div>)}
+              </Draggable>
+              )
+              })}
+            {provided.placeholder}
+            </div>
+          )}
+            </Droppable>
+            </DragDropContext>
 
             <div className='h-[5vh] flex flex-row justify-between items-center border-t border-black'>
               <div className='focus:text-purple-700 hover:text-purple-700 cursor-pointer'>
@@ -246,6 +278,7 @@ const onDragEnd = (result) => {
       <DragAndDrop/>
       {/* <Example2/> */}
     </>
+    )
   );
 };
 
