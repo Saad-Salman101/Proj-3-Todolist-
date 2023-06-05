@@ -274,9 +274,7 @@ const onDragEnd = (result) => {
 
         <div className='h-[20%]'></div>
       </div>
-      {/* <Example/> */}
-      <DragAndDrop/>
-      {/* <Example2/> */}
+
     </>
     )
   );
