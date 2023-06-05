@@ -220,7 +220,7 @@ const onDragEnd = (result) => {
                     onClick={() => handleRemoveItem(index)}
                   />
                 ) : (
-                  <div className='text-white'>..... </div>
+                  <div className='text-[#800080]'>..... </div>
                 )}
                 </div>)}
               </Draggable>
@@ -234,7 +234,7 @@ const onDragEnd = (result) => {
 
             <div className='h-[5vh] flex flex-row justify-between items-center border-t border-black'>
               <div className='focus:text-purple-700 hover:text-purple-700 cursor-pointer'>
-                {activeItemCount} item(s) left
+                {activeItemCount} active item(s) left
               </div>
               <div className='flex'>
                 <div
