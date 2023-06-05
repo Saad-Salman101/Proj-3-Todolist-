@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { FaCheckCircle, FaRegCircle } from 'react-icons/fa';
 import { ImCancelCircle } from 'react-icons/im';
 import { useCookies } from 'react-cookie';
+import Example from './Example';
+import DragAndDrop from './DragAndDrop';
+import Example2 from './Example2';
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const Home1 = () => {
   const [isChecked, setIsChecked] = useState([]);
@@ -16,11 +20,7 @@ const Home1 = () => {
       setList(storedList);
     } else {
       setList([
-        { check: true, message: 'eat chocolate' },
-        { check: true, message: 'eat banana' },
-        { check: false, message: 'eat egg' },
-        { check: true, message: 'eat chips' },
-        { check: false, message: 'eat pasta' },
+        { check: true, message: 'add your task' },
       ]);
     }
   }, []);
@@ -95,6 +95,60 @@ const Home1 = () => {
     );
   };
 
+  // A function to help with reordering the result
+const reorder = (list, startIndex, endIndex) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+  return result;
+};
+
+const grid = 8;
+
+const getItemStyle = (isDragging, draggableStyle) => ({
+  // Some basic styles to make the items look a bit nicer
+  userSelect: "none",
+  padding: `${grid * 2}px`,
+  margin: `0 0 ${grid}px 0`,
+
+  // Change background color if dragging
+  background: isDragging ? "lightgreen" : "grey",
+
+  // Styles we need to apply on draggables
+  ...draggableStyle,
+});
+
+const getListStyle = (isDraggingOver) => ({
+  background: isDraggingOver ? "lightblue" : "lightgrey",
+  padding: `${grid}px`,
+  width: "250px",
+});
+
+const [items, setItems] = useState(getItems(10));
+
+useEffect(() => {
+  // Check if the window object is available
+  if (typeof window !== "undefined") {
+    // Perform any window-dependent operations here
+    // This code will only run in a browser environment
+    // You can initialize or perform any necessary actions that require the window object
+  }
+}, []);
+
+const onDragEnd = (result) => {
+  // Dropped outside the list
+  if (!result.destination) {
+    return;
+  }
+
+  const updatedItems = reorder(
+    items,
+    result.source.index,
+    result.destination.index
+  );
+
+  setItems(updatedItems);
+};
   return (
     <>
       <div className='h-[100vh] bg-red-600 w-full flex flex-col justify-between items-center'>
@@ -188,6 +242,9 @@ const Home1 = () => {
 
         <div className='h-[20%]'></div>
       </div>
+      {/* <Example/> */}
+      <DragAndDrop/>
+      {/* <Example2/> */}
     </>
   );
 };
